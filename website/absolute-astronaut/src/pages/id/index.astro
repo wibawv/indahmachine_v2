@@ -2,6 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import { products, families } from "../../data/products";
 import { trimMetaDescription } from "../../utils/seo";
+import { siteUrl } from "../../utils/siteUrl";
 
 const description = trimMetaDescription(
   "Distributor mesin industri Medan: alternator genset dan generator, motor listrik, power press. Melayani Jakarta, Surabaya, dan seluruh Indonesia. Elektrik motor distributor Indonesia — minta penawaran."
@@ -14,17 +15,17 @@ const familyCounts = families.map((family) => ({
 
 const familyMeta: Record<string, { image: string; alt: string; description: string }> = {
   "Alternator": {
-    image: "/base44_product_image/alternator_icon.webp",
+    image: "base44_product_image/alternator_icon.webp",
     alt: "Alternator",
     description: "Alternator siap genset untuk daya cadangan dan daya utama yang andal.",
   },
   "Electric Motor": {
-    image: "/base44_product_image/electric-motor-icon.avif",
+    image: "base44_product_image/electric-motor-icon.avif",
     alt: "Motor Listrik",
     description: "Motor listrik efisien — elektrik motor distributor Indonesia untuk pompa, fan, kompresor, dan lini produksi.",
   },
   "Power Press": {
-    image: "/base44_product_image/power-press-icon.webp",
+    image: "base44_product_image/power-press-icon.webp",
     alt: "Power Press",
     description: "Power press inklinasi untuk stamping dan fabrikasi logam.",
   },
@@ -56,13 +57,13 @@ const familyMeta: Record<string, { image: string; alt: string; description: stri
             </p>
             <div class="flex flex-wrap gap-3 pt-2">
               <a
-                href="/id/products"
+                href={siteUrl("id/products")}
                 class="rounded-full bg-red-600 px-7 py-3 text-sm font-semibold text-white shadow-sm hover:bg-red-500 transition-colors"
               >
                 Lihat Produk
               </a>
               <a
-                href="/id/contact"
+                href={siteUrl("id/contact")}
                 class="rounded-full border border-red-300 px-7 py-3 text-sm font-semibold text-red-700 hover:bg-red-50 transition-colors"
               >
                 Minta Penawaran
@@ -72,7 +73,7 @@ const familyMeta: Record<string, { image: string; alt: string; description: stri
 
           <div class="relative min-h-[55vh] overflow-hidden rounded-2xl border border-red-100 bg-zinc-100 md:min-h-[50vh]">
             <img
-              src="/base44_product_image/imc_store.jpg"
+              src={siteUrl("base44_product_image/imc_store.jpg")}
               alt="Toko Indah Machine di Medan"
               class="absolute inset-0 h-full w-full object-cover object-center"
               loading="eager"
@@ -96,12 +97,12 @@ const familyMeta: Record<string, { image: string; alt: string; description: stri
             const meta = familyMeta[family];
             return (
               <a
-                href={`/id/products?family=${encodeURIComponent(family)}`}
+                href={siteUrl(`id/products?family=${encodeURIComponent(family)}`)}
                 class="group flex flex-col overflow-hidden rounded-2xl border border-red-100 bg-zinc-50 shadow-sm transition hover:border-red-300 hover:shadow-md"
               >
                 <div class="flex h-40 items-center justify-center bg-zinc-100 p-6">
                   <img
-                    src={meta.image}
+                    src={siteUrl(meta.image)}
                     alt={meta.alt}
                     class="h-28 w-auto object-contain transition group-hover:scale-105"
                     loading="lazy"
@@ -142,7 +143,7 @@ const familyMeta: Record<string, { image: string; alt: string; description: stri
           Dengan pengalaman lebih dari 50 tahun, Indah Machine berdedikasi menyediakan peralatan industri berkualitas tinggi dan andal. Kami membangun kemitraan jangka panjang dengan memberikan keunggulan dan dukungan menyeluruh untuk membantu bisnis Anda berkembang di Medan, Jakarta, dan Surabaya.
         </p>
         <a
-          href="/id/about"
+          href={siteUrl("id/about")}
           class="mt-8 inline-flex items-center gap-1 text-sm font-semibold text-red-400 hover:text-red-300 transition-colors"
         >
           Pelajari lebih lanjut tentang kami →
@@ -214,7 +215,7 @@ const familyMeta: Record<string, { image: string; alt: string; description: stri
         <div class="grid items-center gap-12 md:grid-cols-2">
           <div class="overflow-hidden rounded-2xl border border-zinc-200">
             <img
-              src="/base44_product_image/frontpage_1.png"
+              src={siteUrl("base44_product_image/frontpage_1.png")}
               alt="Produk Indah Machine"
               class="h-full w-full object-cover"
               loading="lazy"
@@ -230,13 +231,13 @@ const familyMeta: Record<string, { image: string; alt: string; description: stri
             </p>
             <div class="flex flex-wrap gap-3 pt-2">
               <a
-                href="/id/about"
+                href={siteUrl("id/about")}
                 class="rounded-full border border-zinc-300 px-6 py-2.5 text-sm font-semibold text-zinc-700 hover:border-red-300 hover:text-red-700 transition-colors"
               >
                 Profil Kami
               </a>
               <a
-                href="/id/products"
+                href={siteUrl("id/products")}
                 class="rounded-full bg-red-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 transition-colors"
               >
                 Lihat Produk

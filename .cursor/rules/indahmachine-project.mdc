@@ -9,7 +9,7 @@ Product catalog site for indahmachine.com — machinery distributor in Medan, In
 
 ## Tech Stack
 - Framework: Astro (static export) + Tailwind CSS
-- Hosting: GitHub Pages (`gh-pages` branch, CNAME → www.indahmachine.com)
+- Hosting: **GitHub Pages** via **GitHub Actions** (`.github/workflows/deploy-pages.yml`) — publishes `website/absolute-astronaut/dist/`. Optional later: **Custom domain** in repo Pages settings + DNS (`CNAME` → `www.indahmachine.com`); until then use the default `*.github.io` URL only.
 - i18n: URL-based routing — `/en/` and `/id/` with `hreflang` meta tags on every page
 - Root `/` redirects to browser language preference (fallback: `/en/`)
 - Pricing policy: contact-for-quote only (no public price list)
@@ -17,12 +17,19 @@ Product catalog site for indahmachine.com — machinery distributor in Medan, In
 
 ## Project Structure
 ```
-website/          # Astro site
-scripts/          # merge-products.js, translate-to-id.js
-product_input/    # Draft CSVs — may be inaccurate, validate before use
-raw_catalog/      # Source-of-truth PDFs
-base44_product_image/  # Product images — committed into repo
+website/absolute-astronaut/  # Astro app (npm run build → dist/)
+scripts/                     # sync-public-assets.js, merge-products.js, translate-to-id.js
+.github/workflows/         # deploy-pages.yml (CI)
+product_input/             # Draft CSVs — may be inaccurate, validate before use
+raw_catalog/               # Source-of-truth PDFs (synced into site public/ on build)
+base44_product_image/      # Product images — committed into repo (synced on build)
 ```
+
+## Git repository and deployment
+- **Repository root** must be the monorepo root (the folder that contains `website/`, `scripts/`, `.github/`, `base44_product_image/`, and `raw_catalog/`). Commit and **push from that root** so GitHub sees the full tree.
+- **Do not** treat `website/` or `website/absolute-astronaut/` as **submodules** or leave a nested `.git` inside them. Submodule gitlinks (`160000` mode) break CI checkout, hide `package-lock.json`, and cause `git`/cache failures on Actions.
+- **Build on CI:** Node **22.x**; `npm ci` and `npm run build` in `website/absolute-astronaut/`. `prebuild` runs `scripts/sync-public-assets.js` — requires checkout of the whole repo.
+- **Astro config:** `website/absolute-astronaut/astro.config.mjs` defaults to `site: https://www.indahmachine.com` and `base: /` for local builds. CI sets **`ASTRO_SITE`** and **`ASTRO_BASE`** so assets and sitemap match `https://<owner>.github.io` and project-page `/repo/` vs user-site `/` as appropriate.
 
 ## Product Families (3 categories)
 - **Alternator:** UCW, TZH, TZH-N, T2W3, T2W3-N, Mecc Alte, Brushless

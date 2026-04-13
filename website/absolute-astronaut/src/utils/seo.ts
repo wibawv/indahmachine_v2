@@ -1,4 +1,5 @@
 import type { Product } from "../data/products";
+import { siteUrl } from "./siteUrl";
 
 export function trimMetaDescription(text: string, max = 158): string {
   const t = text.replace(/\s+/g, " ").trim();
@@ -27,8 +28,8 @@ export function productMetaDescription(product: Product, lang: "en" | "id"): str
 }
 
 export function productJsonLd(product: Product, site: URL): object {
-  const base = site.href.endsWith("/") ? site.href.slice(0, -1) : site.href;
-  const imageUrl = `${base}/${product.image_path}`;
+  const img = product.image_path.replace(/^\/+/, "");
+  const imageUrl = new URL(siteUrl(img), site).href;
   return {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -41,12 +42,12 @@ export function productJsonLd(product: Product, site: URL): object {
 }
 
 export function localBusinessJsonLd(site: URL): object {
-  const base = site.href.endsWith("/") ? site.href.slice(0, -1) : site.href;
+  const url = new URL(import.meta.env.BASE_URL, site).href;
   return {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     name: "Indah Machine",
-    url: base,
+    url,
     email: "indahmachine@gmail.com",
     telephone: ["+6285348674326", "+62816306825"],
     address: {
@@ -64,7 +65,6 @@ export function breadcrumbJsonLd(
   items: { name: string; path: string }[],
   site: URL
 ): object {
-  const base = site.href.endsWith("/") ? site.href.slice(0, -1) : site.href;
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -72,7 +72,7 @@ export function breadcrumbJsonLd(
       "@type": "ListItem",
       position: i + 1,
       name: it.name,
-      item: `${base}${it.path.startsWith("/") ? it.path : `/${it.path}`}`,
+      item: new URL(siteUrl(it.path.replace(/^\/+/, "")), site).href,
     })),
   };
 }

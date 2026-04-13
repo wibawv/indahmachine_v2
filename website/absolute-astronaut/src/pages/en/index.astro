@@ -2,6 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import { products, families } from "../../data/products";
 import { trimMetaDescription } from "../../utils/seo";
+import { siteUrl } from "../../utils/siteUrl";
 
 const description = trimMetaDescription(
   "Industrial machinery distributor Medan, Indonesia: alternators for generators and genset, electric motors, power presses. Serving Jakarta, Surabaya, and Indonesia. Contact for quote."
@@ -14,17 +15,17 @@ const familyCounts = families.map((family) => ({
 
 const familyMeta: Record<string, { image: string; alt: string; description: string }> = {
   "Alternator": {
-    image: "/base44_product_image/alternator_icon.webp",
+    image: "base44_product_image/alternator_icon.webp",
     alt: "Alternator",
     description: "Generator-ready alternators for genset and backup power — reliable prime and standby applications.",
   },
   "Electric Motor": {
-    image: "/base44_product_image/electric-motor-icon.avif",
+    image: "base44_product_image/electric-motor-icon.avif",
     alt: "Electric Motor",
     description: "Efficient motors for pumps, fans, compressors, and production lines.",
   },
   "Power Press": {
-    image: "/base44_product_image/power-press-icon.webp",
+    image: "base44_product_image/power-press-icon.webp",
     alt: "Power Press",
     description: "Inclinable power presses for metal stamping and fabrication.",
   },
@@ -56,13 +57,13 @@ const familyMeta: Record<string, { image: string; alt: string; description: stri
             </p>
             <div class="flex flex-wrap gap-3 pt-2">
               <a
-                href="/en/products"
+                href={siteUrl("en/products")}
                 class="rounded-full bg-red-600 px-7 py-3 text-sm font-semibold text-white shadow-sm hover:bg-red-500 transition-colors"
               >
                 View Products
               </a>
               <a
-                href="/en/contact"
+                href={siteUrl("en/contact")}
                 class="rounded-full border border-red-300 px-7 py-3 text-sm font-semibold text-red-700 hover:bg-red-50 transition-colors"
               >
                 Contact for Quote
@@ -72,7 +73,7 @@ const familyMeta: Record<string, { image: string; alt: string; description: stri
 
           <div class="relative min-h-[55vh] overflow-hidden rounded-2xl border border-red-100 bg-zinc-100 md:min-h-[50vh]">
             <img
-              src="/base44_product_image/frontpage_1.png"
+              src={siteUrl("base44_product_image/frontpage_1.png")}
               alt="Indah Machine — industrial machinery"
               class="absolute inset-0 h-full w-full object-cover object-center"
               loading="eager"
@@ -96,12 +97,12 @@ const familyMeta: Record<string, { image: string; alt: string; description: stri
             const meta = familyMeta[family];
             return (
               <a
-                href={`/en/products?family=${encodeURIComponent(family)}`}
+                href={siteUrl(`en/products?family=${encodeURIComponent(family)}`)}
                 class="group flex flex-col overflow-hidden rounded-2xl border border-red-100 bg-zinc-50 shadow-sm transition hover:border-red-300 hover:shadow-md"
               >
                 <div class="flex h-40 items-center justify-center bg-zinc-100 p-6">
                   <img
-                    src={meta.image}
+                    src={siteUrl(meta.image)}
                     alt={meta.alt}
                     class="h-28 w-auto object-contain transition group-hover:scale-105"
                     loading="lazy"
@@ -142,7 +143,7 @@ const familyMeta: Record<string, { image: string; alt: string; description: stri
           With over 50 years of experience, Indah Machine is dedicated to providing high-quality, reliable industrial equipment. We build lasting partnerships by delivering excellence and comprehensive support to help your business thrive across Medan, Jakarta, and Surabaya.
         </p>
         <a
-          href="/en/about"
+          href={siteUrl("en/about")}
           class="mt-8 inline-flex items-center gap-1 text-sm font-semibold text-red-400 hover:text-red-300 transition-colors"
         >
           Learn more about us →
@@ -214,7 +215,7 @@ const familyMeta: Record<string, { image: string; alt: string; description: stri
         <div class="grid items-center gap-12 md:grid-cols-2">
           <div class="overflow-hidden rounded-2xl border border-zinc-200">
             <img
-              src="/base44_product_image/imc_store.jpg"
+              src={siteUrl("base44_product_image/imc_store.jpg")}
               alt="Indah Machine store in Medan"
               class="h-full w-full object-cover"
               loading="lazy"
@@ -230,13 +231,13 @@ const familyMeta: Record<string, { image: string; alt: string; description: stri
             </p>
             <div class="flex flex-wrap gap-3 pt-2">
               <a
-                href="/en/about"
+                href={siteUrl("en/about")}
                 class="rounded-full border border-zinc-300 px-6 py-2.5 text-sm font-semibold text-zinc-700 hover:border-red-300 hover:text-red-700 transition-colors"
               >
                 Our Story
               </a>
               <a
-                href="/en/products"
+                href={siteUrl("en/products")}
                 class="rounded-full bg-red-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 transition-colors"
               >
                 View Products

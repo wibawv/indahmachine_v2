@@ -1,7 +1,9 @@
 ---
+import { siteUrl } from "../utils/siteUrl";
+
 const { lang = "en" } = Astro.props;
 const isEn = lang === "en";
-const base = isEn ? "/en" : "/id";
+const prefix = isEn ? "en" : "id";
 ---
 
 <footer class="bg-zinc-900 text-zinc-400">
@@ -10,9 +12,9 @@ const base = isEn ? "/en" : "/id";
 
       <!-- Col 1: Brand -->
       <div class="space-y-4">
-        <a href={base + "/"} class="inline-flex rounded-2xl bg-zinc-100 px-3 py-2 shadow-sm">
+        <a href={siteUrl(`${prefix}/`)} class="inline-flex rounded-2xl bg-zinc-100 px-3 py-2 shadow-sm">
           <img
-            src="/base44_product_image/IMC_Logo.png"
+            src={siteUrl("base44_product_image/IMC_Logo.png")}
             alt="Indah Machine logo"
             class="h-10 w-auto"
             loading="lazy"
@@ -35,16 +37,16 @@ const base = isEn ? "/en" : "/id";
           {isEn ? "Navigation" : "Navigasi"}
         </h3>
         <nav class="flex flex-col gap-2 text-sm">
-          <a href={base + "/"} class="hover:text-white transition-colors">
+          <a href={siteUrl(`${prefix}/`)} class="hover:text-white transition-colors">
             {isEn ? "Home" : "Beranda"}
           </a>
-          <a href={base + "/products"} class="hover:text-white transition-colors">
+          <a href={siteUrl(`${prefix}/products`)} class="hover:text-white transition-colors">
             {isEn ? "Products" : "Produk"}
           </a>
-          <a href={base + "/about"} class="hover:text-white transition-colors">
+          <a href={siteUrl(`${prefix}/about`)} class="hover:text-white transition-colors">
             {isEn ? "About" : "Tentang"}
           </a>
-          <a href={base + "/contact"} class="hover:text-white transition-colors">
+          <a href={siteUrl(`${prefix}/contact`)} class="hover:text-white transition-colors">
             {isEn ? "Contact" : "Kontak"}
           </a>
         </nav>

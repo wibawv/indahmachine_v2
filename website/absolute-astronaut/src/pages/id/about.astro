@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { trimMetaDescription } from "../../utils/seo";
+import { siteUrl } from "../../utils/siteUrl";
 
 const description = trimMetaDescription(
   "Tentang Indah Machine: distributor mesin industri di Medan — alternator genset dan generator, motor listrik, power press. Melayani pelanggan di Jakarta, Surabaya, dan seluruh Indonesia."
@@ -73,7 +74,7 @@ const description = trimMetaDescription(
             </p>
           </div>
           <a
-            href="/id/contact"
+            href={siteUrl("id/contact")}
             class="inline-flex rounded-full bg-emerald-500 px-5 py-2 text-xs font-semibold text-slate-950 shadow-sm hover:bg-emerald-400"
           >
             Minta Penawaran

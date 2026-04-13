@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import { siteUrl } from "../utils/siteUrl";
 
 export interface LocalizedPaths {
   en: string;
@@ -36,10 +37,11 @@ const {
 } = Astro.props as Props;
 
 const site = Astro.site ?? new URL("https://www.indahmachine.com/");
-const path = canonicalPath ?? Astro.url.pathname;
-const canonicalURL = new URL(path, site).href;
-const ogPath = ogImagePath.startsWith("/") ? ogImagePath : `/${ogImagePath}`;
-const ogImageURL = new URL(ogPath, site).href;
+const canonicalURL = canonicalPath
+  ? new URL(siteUrl(canonicalPath.replace(/^\/+/, "")), site).href
+  : new URL(Astro.url.pathname, site).href;
+const ogPathRaw = ogImagePath.startsWith("/") ? ogImagePath.slice(1) : ogImagePath;
+const ogImageURL = new URL(siteUrl(ogPathRaw), site).href;
 
 const localeOg = lang === "id" ? "id_ID" : "en_US";
 const altLocaleOg = lang === "id" ? "en_US" : "id_ID";
@@ -47,8 +49,8 @@ const altLocaleOg = lang === "id" ? "en_US" : "id_ID";
 let enPageUrl: string | null = null;
 let idPageUrl: string | null = null;
 if (localizedPaths) {
-  enPageUrl = new URL(localizedPaths.en, site).href;
-  idPageUrl = new URL(localizedPaths.id, site).href;
+  enPageUrl = new URL(siteUrl(localizedPaths.en.replace(/^\/+/, "")), site).href;
+  idPageUrl = new URL(siteUrl(localizedPaths.id.replace(/^\/+/, "")), site).href;
 }
 const xDefaultUrl = enPageUrl ?? canonicalURL;
 
@@ -60,8 +62,8 @@ const jsonLd = jsonLdRaw;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/png" href="/base44_product_image/IMC_Logo.png" />
-    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/png" href={siteUrl("base44_product_image/IMC_Logo.png")} />
+    <link rel="icon" href={siteUrl("favicon.ico")} sizes="32x32" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
