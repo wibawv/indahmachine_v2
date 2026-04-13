@@ -1,0 +1,26 @@
+name,category,series,model,image_url,pdf_url,description,technical_specifications,dimension_specifications,features,applications,id,created_date,updated_date,created_by_id,created_by,is_sample
+Synchronous Alternator Series TZH-N,alternators,TZH-N,"TZH-N 184, TZH-N 224, TZH-N 274, TZH-N 444, TZH-N 544",https://raw.githubusercontent.com/wibawv/indahmachine/master/images/base44_product_image/tzh_n_alternator.png,https://raw.githubusercontent.com/wibawv/indahmachine/master/Doc/tzh-n_alternator.pdf,"The TZH-N series synchronous alternators from Lanzhou Electric deliver high-performance, stable power output, and robust mechanical integrity. Designed for diesel-generator systems and industrial-grade reliability.","{
+        ""Power Range"": ""25 kVA to 600 kVA"",
+        ""Voltage"": ""400V (customizable)"",
+        ""Frequency"": ""50/60 Hz"",
+        ""Excitation"": ""Brushless, static excitation"",
+        ""Poles"": ""4"",
+        ""Insulation Class"": ""H"",
+        ""Protection"": ""IP21, IP23 optional"",
+        ""Voltage Regulation"": ""±1%""
+    }","{
+        ""Mounting"": ""Flange or foot mount"",
+        ""Frame Sizes"": ""184, 224, 274, 444, 544"",
+        ""Example Size"": ""Length 1530 mm, Height 900 mm (TZH-N 544)""
+    }","[
+        ""Low waveform distortion"",
+        ""Static excitation system"",
+        ""Rugged mechanical design"",
+        ""High stability and overload capacity"",
+        ""Optimized ventilation system""
+    ]","[
+        ""Diesel-generator sets"",
+        ""Standby and emergency power"",
+        ""Heavy-duty industrial operations"",
+        ""Mobile power stations""
+    ]",,,,,,

@@ -1,0 +1,18 @@
+{
+  "name": "indah-machine",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "validate": "node scripts/validate-products.js",
+    "build:data": "node scripts/merge-products.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "csv-parse": "^6.1.0"
+  }
+}

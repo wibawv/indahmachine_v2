@@ -1,0 +1,90 @@
+---
+description: Indah Machine website project conventions and context
+alwaysApply: true
+---
+
+# Indah Machine Website
+
+Product catalog site for indahmachine.com — machinery distributor in Medan, Indonesia.
+
+## Tech Stack
+- Framework: Astro (static export) + Tailwind CSS
+- Hosting: GitHub Pages (`gh-pages` branch, CNAME → www.indahmachine.com)
+- i18n: URL-based routing — `/en/` and `/id/` with `hreflang` meta tags on every page
+- Root `/` redirects to browser language preference (fallback: `/en/`)
+- Pricing policy: contact-for-quote only (no public price list)
+- Service scope: installation, commissioning, and technical advisory if needed
+
+## Project Structure
+```
+website/          # Astro site
+scripts/          # merge-products.js, translate-to-id.js
+product_input/    # Draft CSVs — may be inaccurate, validate before use
+raw_catalog/      # Source-of-truth PDFs
+base44_product_image/  # Product images — committed into repo
+```
+
+## Product Families (3 categories)
+- **Alternator:** UCW, TZH, TZH-N, T2W3, T2W3-N, Mecc Alte, Brushless
+- **Electric Motor:** MECC Y2/Y23, YJS, Y/YR, YPTZ/YPTQ
+- **Power Press:** J23/JC23
+
+## Data Rules
+- `raw_catalog/` PDFs are the **source of truth** — never trust `product_input/` CSVs without validation
+- Show `technical_specifications` only — **never** render `dimension_specifications` on any page
+- Buyers download the PDF catalog to get dimension data
+- Y/YR series has no PDF — omit the download button for this product only
+- All images and PDFs are committed into the repo (no external GitHub raw or Supabase URLs)
+
+## Strict Data Quality Gate (must pass before publish)
+- Mandatory fields per product: `id`, `name`, `family`, `series`, `technical_specifications`, `image_path`
+- `pdf_path` is mandatory for all products except Y/YR
+- Normalize technical keys where available: `kW/kVA`, `Voltage`, `Frequency`, `RPM`
+- No duplicate `id` values and no duplicate `model` values within the same series
+- 0 broken local asset links (`image_path`, `pdf_path`)
+- Block release if any gate fails
+
+## Translation QA (best-judgment workflow)
+- Auto-translate EN → ID, then manually review
+- Review priority: Home/About/Contact → family pages → product details
+- Preserve all technical units/symbols in translation (`kW`, `kVA`, `V`, `Hz`, `RPM`)
+- Keep terminology consistent across pages
+
+## Asset Mapping
+
+| Product | Image | PDF |
+|---------|-------|-----|
+| UCW Alternator | `ucw_alternator.png` | `ucw_alternator.pdf` |
+| TZH Alternator | `tzh_alternator.png` | `tzh_alternator.pdf` |
+| TZH-N Alternator | `tzh_n_alternator.png` | `tzh-n_alternator.pdf` |
+| T2W3 Alternator | `t2w3_alternator.png` | `t2w3_alternator.pdf` |
+| T2W3-N Alternator | `t2w3n_alternator.png` | `t2w3n_alternator.pdf` |
+| Mecc Alte Alternator | `meccalte_alternator.png` | `meccalte_alternator.pdf` |
+| Brushless Alternator | `alternator_icon.webp` | `Brushless_Alt.pdf` |
+| MECC Motor | `mecc_motor.png` | `mecc_motor.pdf` |
+| YJS Motor | `electric-motor-icon.avif` | `YJS.pdf` |
+| Y/YR Motor | `electric-motor-icon.avif` | *(no PDF — no download button)* |
+| YPTZ/YPTQ Motor | `electric-motor-icon.avif` | `yptz_yptq_series.pdf` |
+| J23/JC23 Power Press | `j23_incline_power_press.png` | `Power_Press.pdf` |
+
+## Home Page Assets
+- Logo: `IMC_logo_with_word.png`
+- Hero banner: `frontpage_1.png`
+- Company/about section: `imc_store.jpg`
+- Family cards: `alternator_icon.webp`, `electric-motor-icon.avif`, `power-press-icon.webp`
+
+## Contact Info
+- Address: Jln. Mangkubumi No. 12, Medan 20151, North Sumatra, Indonesia
+- Email: indahmachine@gmail.com
+- Phone 1: +62 85-34-867-4326
+- Phone 2: +62 81-630-6825
+- WhatsApp: +62 853-4867-4326 — `wa.me` floating button site-wide + on Contact page
+- Google Maps embed on Contact page for Jln. Mangkubumi No. 12, Medan
+
+## Design
+- Style: Modern + industrial (clean layout, strong typography, steel/industrial colour tones)
+- Home: hero → product family cards (3 families) → company intro → services overview → contact CTA
+- Pages: Home, Products (filterable by family), Product detail, About, Contact
+- Product detail shows: image, main technical specs, features, applications, PDF download button, **Request Quote** CTA
+- Use "Contact for Quote" CTA wording on product/family pages (no public pricing)
+- For Y/YR product page, show: "Catalog available on request" + WhatsApp/contact-form CTA

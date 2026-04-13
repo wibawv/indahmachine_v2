@@ -1,0 +1,65 @@
+# Deploy static site to GitHub Pages.
+#
+# One-time repo setup: Settings → Pages → Build and deployment → Source: GitHub Actions.
+# Optional later: custom domain (e.g. www.indahmachine.com) in Pages settings + DNS CNAME.
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main, master]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set Astro site and base for GitHub Pages
+        run: |
+          OWNER="${{ github.repository_owner }}"
+          REPO="${{ github.event.repository.name }}"
+          OWNER_LC=$(echo "$OWNER" | tr '[:upper:]' '[:lower:]')
+          REPO_LC=$(echo "$REPO" | tr '[:upper:]' '[:lower:]')
+          if [ "$REPO_LC" = "${OWNER_LC}.github.io" ]; then
+            echo "ASTRO_SITE=https://${OWNER_LC}.github.io" >> "$GITHUB_ENV"
+            echo "ASTRO_BASE=/" >> "$GITHUB_ENV"
+          else
+            echo "ASTRO_SITE=https://${OWNER_LC}.github.io" >> "$GITHUB_ENV"
+            echo "ASTRO_BASE=/${REPO}/" >> "$GITHUB_ENV"
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: website/absolute-astronaut/package-lock.json
+
+      - name: Install and build
+        working-directory: website/absolute-astronaut
+        run: |
+          npm ci
+          npm run build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: website/absolute-astronaut/dist
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
