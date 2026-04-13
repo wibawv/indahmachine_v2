@@ -1,0 +1,10 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const acceptLang = Astro.request.headers.get("accept-language") || "";
+const prefersId = acceptLang.toLowerCase().startsWith("id");
+const target = prefersId ? "/id/" : "/en/";
+Astro.redirect(target);
+---
+
+<Layout title="Indah Machine" />

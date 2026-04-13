@@ -1,0 +1,237 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { products, type Product, getSeriesSiblings, getChildModels, getVaryingSpecKeys } from "../../../data/products";
+import { formatSpecValue } from "../../../utils/formatSpecValue";
+import { productMetaDescription, productJsonLd, breadcrumbJsonLd } from "../../../utils/seo";
+
+export function getStaticPaths() {
+  return products.map((p) => ({
+    params: { id: p.id },
+    props: { productId: p.id },
+  }));
+}
+
+const { productId } = Astro.props;
+const product = products.find((p) => p.id === productId) as Product | undefined;
+
+if (!product) {
+  throw new Error(`Product not found: ${productId}`);
+}
+
+const isYYR = product.series === "Y/YR";
+const seriesSiblings = getSeriesSiblings(product);
+const childModels = getChildModels(seriesSiblings);
+const varyingKeys = getVaryingSpecKeys(childModels);
+
+const site = Astro.site ?? new URL("https://www.indahmachine.com/");
+const productPath = `/id/products/${product.id}`;
+const jsonLd = [
+  JSON.stringify(productJsonLd(product, site)),
+  JSON.stringify(
+    breadcrumbJsonLd(
+      [
+        { name: "Beranda", path: "/id/" },
+        { name: "Produk", path: "/id/products" },
+        {
+          name: product.family,
+          path: `/id/products?family=${encodeURIComponent(product.family)}`,
+        },
+        { name: product.name, path: productPath },
+      ],
+      site
+    )
+  ),
+];
+---
+
+<Layout
+  lang="id"
+  title={`Indah Machine – ${product.name}`}
+  description={productMetaDescription(product, "id")}
+  canonicalPath={productPath}
+  localizedPaths={{ en: `/en/products/${product.id}`, id: productPath }}
+  ogImagePath={`/${product.image_path}`}
+  jsonLd={jsonLd}
+>
+  <main class="bg-zinc-100 text-zinc-900">
+    <section class="mx-auto flex max-w-6xl flex-col gap-10 px-4 py-16">
+
+      <!-- Breadcrumb -->
+      <nav class="text-xs text-zinc-500">
+        <a href="/id/products" class="hover:text-red-600 transition-colors">Produk</a>
+        <span class="mx-2 text-zinc-300">/</span>
+        <a
+          href={`/id/products?family=${encodeURIComponent(product.family)}`}
+          class="hover:text-red-600 transition-colors"
+        >{product.family}</a>
+        <span class="mx-2 text-zinc-300">/</span>
+        <span class="text-zinc-700">{product.name}</span>
+      </nav>
+
+      <!-- Header row: title + actions -->
+      <header class="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+        <div class="space-y-2 rounded-2xl border border-zinc-200 bg-zinc-100 p-6">
+          <p class="text-xs font-semibold uppercase tracking-[0.2em] text-red-500">
+            {product.family} · {product.series}
+          </p>
+          <h1 class="text-3xl font-semibold tracking-tight text-zinc-900 sm:text-4xl">
+            {product.name}
+          </h1>
+          {product.model && (
+            <p class="text-sm text-zinc-500">Model: {product.model}</p>
+          )}
+          <p class="max-w-2xl text-base leading-relaxed text-zinc-600">
+            {product.description}
+          </p>
+        </div>
+
+        <div class="flex shrink-0 flex-col items-start gap-3">
+          <a
+            href="/id/contact"
+            class="rounded-full bg-red-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 transition-colors"
+          >
+            Minta Penawaran
+          </a>
+          {!isYYR && product.pdf_path && (
+            <a
+              href={`/${product.pdf_path}`}
+              class="text-xs font-medium text-red-600 hover:text-red-500 transition-colors"
+            >
+              Unduh katalog teknis (PDF)
+            </a>
+          )}
+          {isYYR && (
+            <p class="max-w-xs text-xs text-zinc-500">
+              Katalog tersedia berdasarkan permintaan. Silakan hubungi kami untuk dimensi detail.
+            </p>
+          )}
+        </div>
+      </header>
+
+      <!-- Product image + specs + features -->
+      <div class="grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1.8fr)_minmax(0,1fr)]">
+
+        <!-- Product image -->
+        <div class="flex min-h-[18rem] items-center justify-center overflow-hidden rounded-2xl border border-zinc-200 bg-white p-3 sm:min-h-[20rem] sm:p-4">
+          <img
+            src={`/${product.image_path}`}
+            alt={product.name}
+            class="max-h-80 w-full object-contain object-center sm:max-h-96"
+            loading="lazy"
+          />
+        </div>
+
+        <!-- Technical specs -->
+        <div class="space-y-4 rounded-2xl border border-zinc-200 bg-zinc-100 p-6">
+          <h2 class="text-sm font-semibold text-zinc-900">
+            Spesifikasi teknis utama
+          </h2>
+          <dl class="grid gap-2.5 text-sm text-zinc-800">
+            {Object.entries(product.technical_specifications).map(([key, value]) => (
+              <div class="flex gap-3 border-b border-zinc-200/80 pb-2 last:border-0 last:pb-0">
+                <dt class="w-40 shrink-0 text-zinc-500">{key}</dt>
+                <dd class="flex-1 font-medium text-zinc-900">
+                  {formatSpecValue(value)}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+
+        <!-- Features + Applications -->
+        <div class="space-y-6">
+          {product.features.length > 0 && (
+            <div class="space-y-3 rounded-2xl border border-zinc-200 bg-zinc-100 p-6">
+              <h2 class="text-sm font-semibold text-zinc-900">
+                Fitur
+              </h2>
+              <ul class="space-y-2 text-sm text-zinc-600">
+                {product.features.map((f) => (
+                  <li class="flex gap-2">
+                    <span class="mt-0.5 shrink-0 text-red-400">•</span>
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {product.applications.length > 0 && (
+            <div class="space-y-3 rounded-2xl border border-zinc-200 bg-zinc-100 p-6">
+              <h2 class="text-sm font-semibold text-zinc-900">
+                Aplikasi umum
+              </h2>
+              <ul class="space-y-2 text-sm text-zinc-600">
+                {product.applications.map((a) => (
+                  <li class="flex gap-2">
+                    <span class="mt-0.5 shrink-0 text-red-400">•</span>
+                    <span>{a}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+
+      </div>
+
+      {childModels.length > 1 && varyingKeys.length > 0 && (
+        <div class="space-y-3">
+          <h2 class="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+            Semua model dalam seri ini
+          </h2>
+          <div class="overflow-x-auto rounded-2xl border border-zinc-200 bg-white shadow-sm">
+            <table class="w-full min-w-[28rem] border-collapse text-left text-sm">
+              <thead>
+                <tr class="border-b border-zinc-200 bg-zinc-50">
+                  <th class="whitespace-nowrap px-4 py-3 font-semibold text-zinc-900">Model</th>
+                  {varyingKeys.map((key) => (
+                    <th class="whitespace-nowrap px-4 py-3 font-semibold text-zinc-900">{key}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {childModels.map((s) => {
+                  const isCurrent = s.id === product.id;
+                  return (
+                    <tr
+                      class:list={[
+                        "border-b border-zinc-100 last:border-0",
+                        isCurrent
+                          ? "border-l-2 border-l-red-500 bg-red-50"
+                          : "bg-white",
+                      ]}
+                    >
+                      <td class="whitespace-nowrap px-4 py-2.5 font-medium text-zinc-900">
+                        {s.model}
+                      </td>
+                      {varyingKeys.map((key) => (
+                        <td class="whitespace-nowrap px-4 py-2.5 text-zinc-600">
+                          {formatSpecValue(s.technical_specifications[key]) || "—"}
+                        </td>
+                      ))}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      <!-- Bottom CTA -->
+      <div class="rounded-2xl border border-red-100 bg-zinc-100 px-8 py-8 text-center">
+        <p class="mb-4 text-sm text-zinc-600">
+          Butuh bantuan pemilihan kapasitas atau penawaran untuk {product.name}?
+        </p>
+        <a
+          href="/id/contact"
+          class="inline-flex rounded-full bg-red-600 px-8 py-3 text-sm font-semibold text-white shadow-sm hover:bg-red-500 transition-colors"
+        >
+          Minta Penawaran
+        </a>
+      </div>
+
+    </section>
+  </main>
+</Layout>

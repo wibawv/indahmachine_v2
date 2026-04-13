@@ -1,0 +1,106 @@
+---
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+export interface LocalizedPaths {
+  en: string;
+  id: string;
+}
+
+interface Props {
+  lang?: "en" | "id";
+  title?: string;
+  description?: string;
+  /** Pathname for canonical + og:url, e.g. /en/products/foo */
+  canonicalPath?: string;
+  localizedPaths?: LocalizedPaths;
+  /** Site-root path for og:image */
+  ogImagePath?: string;
+  noindex?: boolean;
+  /** Stringified JSON-LD objects */
+  jsonLd?: string[];
+}
+
+const DEFAULT_OG = "/base44_product_image/frontpage_1.png";
+
+const {
+  lang = "en",
+  title = "Indah Machine",
+  description,
+  canonicalPath,
+  localizedPaths,
+  ogImagePath = DEFAULT_OG,
+  noindex = false,
+  jsonLd: jsonLdRaw = [],
+} = Astro.props as Props;
+
+const site = Astro.site ?? new URL("https://www.indahmachine.com/");
+const path = canonicalPath ?? Astro.url.pathname;
+const canonicalURL = new URL(path, site).href;
+const ogPath = ogImagePath.startsWith("/") ? ogImagePath : `/${ogImagePath}`;
+const ogImageURL = new URL(ogPath, site).href;
+
+const localeOg = lang === "id" ? "id_ID" : "en_US";
+const altLocaleOg = lang === "id" ? "en_US" : "id_ID";
+
+let enPageUrl: string | null = null;
+let idPageUrl: string | null = null;
+if (localizedPaths) {
+  enPageUrl = new URL(localizedPaths.en, site).href;
+  idPageUrl = new URL(localizedPaths.id, site).href;
+}
+const xDefaultUrl = enPageUrl ?? canonicalURL;
+
+const jsonLd = jsonLdRaw;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/png" href="/base44_product_image/IMC_Logo.png" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="canonical" href={canonicalURL} />
+    {enPageUrl && idPageUrl && (
+      <>
+        <link rel="alternate" hreflang="en" href={enPageUrl} />
+        <link rel="alternate" hreflang="id" href={idPageUrl} />
+        <link rel="alternate" hreflang="x-default" href={xDefaultUrl} />
+      </>
+    )}
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Indah Machine" />
+    <meta property="og:title" content={title} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:locale" content={localeOg} />
+    <meta property="og:locale:alternate" content={altLocaleOg} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    {description && <meta name="twitter:description" content={description} />}
+    <meta name="twitter:image" content={ogImageURL} />
+    {jsonLd.map((raw) => (
+      <script type="application/ld+json" set:html={raw} />
+    ))}
+  </head>
+  <body class="min-h-screen bg-zinc-100 text-zinc-900 antialiased">
+    <Header lang={lang} />
+    <slot />
+    <Footer lang={lang} />
+
+    <a
+      href="https://wa.me/6285348674326"
+      class="fixed bottom-4 right-4 rounded-full bg-emerald-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/40 hover:bg-emerald-400"
+      aria-label="WhatsApp Indah Machine"
+    >
+      WhatsApp
+    </a>
+  </body>
+</html>
