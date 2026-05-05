@@ -1,7 +1,45 @@
 ---
 import { siteUrl } from "../utils/siteUrl";
 
-const acceptLang = Astro.request.headers.get("accept-language") || "";
-const prefersId = acceptLang.toLowerCase().startsWith("id");
-return Astro.redirect(siteUrl(prefersId ? "id/" : "en/"));
+const englishPath = siteUrl("en/");
+const indonesianPath = siteUrl("id/");
 ---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Indah Machine</title>
+    <link rel="canonical" href={englishPath} />
+    <meta http-equiv="refresh" content={`3;url=${englishPath}`} />
+    <script define:vars={{ englishPath, indonesianPath }}>
+      const languages = navigator.languages || [navigator.language || ""];
+      const prefersIndonesian = languages.some((language) =>
+        language.toLowerCase().startsWith("id")
+      );
+      const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+      const isIndonesiaTimeZone = [
+        "Asia/Jakarta",
+        "Asia/Makassar",
+        "Asia/Jayapura",
+      ].includes(timeZone);
+
+      window.location.replace(
+        prefersIndonesian || isIndonesiaTimeZone ? indonesianPath : englishPath
+      );
+    </script>
+  </head>
+  <body>
+    <main>
+      <h1>Indah Machine</h1>
+      <p>Choose your language:</p>
+      <p>
+        <a href={englishPath}>English</a>
+        <span aria-hidden="true"> | </span>
+        <a href={indonesianPath}>Bahasa Indonesia</a>
+      </p>
+    </main>
+  </body>
+</html>
