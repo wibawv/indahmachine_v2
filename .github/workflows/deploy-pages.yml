@@ -27,19 +27,10 @@ jobs:
         with:
           submodules: false
 
-      - name: Set Astro site and base for GitHub Pages
+      - name: Set Astro site and base for custom domain
         run: |
-          OWNER="${{ github.repository_owner }}"
-          REPO="${{ github.event.repository.name }}"
-          OWNER_LC=$(echo "$OWNER" | tr '[:upper:]' '[:lower:]')
-          REPO_LC=$(echo "$REPO" | tr '[:upper:]' '[:lower:]')
-          if [ "$REPO_LC" = "${OWNER_LC}.github.io" ]; then
-            echo "ASTRO_SITE=https://${OWNER_LC}.github.io" >> "$GITHUB_ENV"
-            echo "ASTRO_BASE=/" >> "$GITHUB_ENV"
-          else
-            echo "ASTRO_SITE=https://${OWNER_LC}.github.io" >> "$GITHUB_ENV"
-            echo "ASTRO_BASE=/${REPO}/" >> "$GITHUB_ENV"
-          fi
+          echo "ASTRO_SITE=https://indahmachine.com" >> "$GITHUB_ENV"
+          echo "ASTRO_BASE=/" >> "$GITHUB_ENV"
 
       - name: Ensure package-lock.json is tracked
         run: test -f website/absolute-astronaut/package-lock.json
