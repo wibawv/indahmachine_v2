@@ -46,7 +46,7 @@ base44_product_image/      # Product images — committed into repo (synced on b
 ## Strict Data Quality Gate (must pass before publish)
 - Mandatory fields per product: `id`, `name`, `family`, `series`, `technical_specifications`, `image_path`
 - `pdf_path` is mandatory for all products except Y/YR
-- Normalize technical keys where available: `kW/kVA`, `Voltage`, `Frequency`, `RPM`
+- Normalize technical keys where available: `kW` and `kVA` separately, `Voltage`, `Frequency`, `RPM`
 - No duplicate `id` values and no duplicate `model` values within the same series
 - 0 broken local asset links (`image_path`, `pdf_path`)
 - Block release if any gate fails

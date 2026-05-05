@@ -115,9 +115,12 @@ function normalizeTechnicalSpecs(raw) {
 
   const result = { ...obj };
 
-  if (result.kW && !result["kW/kVA"]) {
-    result["kW/kVA"] = result.kW;
-    delete result.kW;
+  // Canonical key is `kW` (active power). Migrate legacy CSV key `kW/kVA`.
+  if ("kW/kVA" in result) {
+    if (!("kW" in result) || result.kW == null) {
+      result.kW = result["kW/kVA"];
+    }
+    delete result["kW/kVA"];
   }
 
   return result;

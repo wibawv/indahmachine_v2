@@ -1,0 +1,101 @@
+---
+import { formatSpecValue } from "../utils/formatSpecValue";
+
+type RatingMap = Record<string, unknown>;
+
+const {
+  ratings,
+  heading = "Catalog ratings",
+} = Astro.props as {
+  ratings?: RatingMap;
+  heading?: string;
+};
+
+const connections = (ratings?.connections ?? {}) as RatingMap;
+const industrialRatings = (ratings?.industrial_ratings ?? {}) as RatingMap;
+const marineRatings = (ratings?.marine_ratings ?? {}) as RatingMap;
+const physicalSpecs = (ratings?.physical_specs ?? {}) as RatingMap;
+
+const sectionEntries = (section: RatingMap) => Object.entries(section);
+const hasSection = (section: RatingMap) => Object.keys(section).length > 0;
+---
+
+{ratings && (
+  <section class="space-y-5">
+    <div>
+      <h2 class="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
+        {heading}
+      </h2>
+      {ratings.source && (
+        <p class="mt-2 text-sm text-zinc-500">{formatSpecValue(ratings.source)}</p>
+      )}
+    </div>
+
+    {hasSection(connections) && (
+      <div class="overflow-x-auto rounded-2xl border border-zinc-200 bg-white shadow-sm">
+        <table class="w-full min-w-[40rem] border-collapse text-left text-sm">
+          <thead>
+            <tr class="border-b border-zinc-200 bg-zinc-50">
+              <th class="px-4 py-3 font-semibold text-zinc-900">Frequency</th>
+              <th class="px-4 py-3 font-semibold text-zinc-900">Connection voltages</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sectionEntries(connections).map(([frequency, values]) => (
+              <tr class="border-b border-zinc-100 last:border-0">
+                <td class="whitespace-nowrap px-4 py-3 font-medium text-zinc-900">{frequency}</td>
+                <td class="px-4 py-3 text-zinc-600">{formatSpecValue(values)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+
+    {hasSection(industrialRatings) && (
+      <div class="grid gap-4 lg:grid-cols-2">
+        {sectionEntries(industrialRatings).map(([frequency, values]) => (
+          <div class="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
+            <h3 class="text-sm font-semibold text-zinc-900">Industrial ratings · {frequency}</h3>
+            <dl class="mt-4 grid gap-2 text-sm">
+              {sectionEntries(values as RatingMap).map(([key, value]) => (
+                <div class="grid gap-1 border-b border-zinc-100 pb-2 last:border-0 last:pb-0 sm:grid-cols-[13rem_minmax(0,1fr)]">
+                  <dt class="text-zinc-500">{key}</dt>
+                  <dd class="font-medium text-zinc-900">{formatSpecValue(value)}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        ))}
+      </div>
+    )}
+
+    {hasSection(marineRatings) && (
+      <div class="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
+        <h3 class="text-sm font-semibold text-zinc-900">Marine ratings</h3>
+        <dl class="mt-4 grid gap-2 text-sm">
+          {sectionEntries(marineRatings).map(([key, value]) => (
+            <div class="grid gap-1 border-b border-zinc-100 pb-2 last:border-0 last:pb-0 sm:grid-cols-[13rem_minmax(0,1fr)]">
+              <dt class="text-zinc-500">{key}</dt>
+              <dd class="font-medium text-zinc-900">{formatSpecValue(value)}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    )}
+
+    {hasSection(physicalSpecs) && (
+      <div class="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
+        <h3 class="text-sm font-semibold text-zinc-900">Physical specs</h3>
+        <dl class="mt-4 grid gap-2 text-sm sm:grid-cols-2">
+          {sectionEntries(physicalSpecs).map(([key, value]) => (
+            <div class="border-b border-zinc-100 pb-2 last:border-0 last:pb-0">
+              <dt class="text-zinc-500">{key}</dt>
+              <dd class="mt-1 font-medium text-zinc-900">{formatSpecValue(value)}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    )}
+  </section>
+)}

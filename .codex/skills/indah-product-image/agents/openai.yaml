@@ -1,0 +1,4 @@
+interface:
+  display_name: "Indah Product Image"
+  short_description: "Clean catalog images for Indah products."
+  default_prompt: "Use $indah-product-image to create a clean website product image for an Indah Machine catalog item."

@@ -1,6 +1,6 @@
 ---
 name: indahmachine-product-workflow
-description: Step-by-step workflows for the Indah Machine website — ingesting product data from PDFs/CSVs, running the data quality gate, and performing EN→ID translation QA. Use when adding or updating product data, validating product records before publishing, checking for broken asset links, or reviewing Indonesian translations for the website.
+description: Step-by-step workflows for the Indah Machine website — ingesting product data from PDFs/CSVs, running the data quality gate, and performing EN→ID translation QA. Use when adding or updating product data, especially alternator catalog records, validating product records before publishing, checking for broken asset links, or reviewing Indonesian translations for the website.
 ---
 
 # Indah Machine Product Workflow
@@ -16,6 +16,7 @@ Use when adding a new product or updating existing specs.
 **Step 1 — Extract from PDF (source of truth)**
 - Read the relevant PDF in `raw_catalog/`
 - Extract: model names, power ratings, voltage, frequency, RPM, and any other technical specs
+- For alternators, always default to pulling the full available stats set: `kW`, `kVA`, `Current`, `Voltage`, `Speed`, `Efficiency`, `Weight`, plus every remaining catalog stat/column/spec row that applies to the model. Do not stop at the short display set when the PDF includes more alternator data.
 - Do not rely on `product_input/` CSVs alone — cross-check every value against the PDF
 
 **Step 2 — Build the product record**
@@ -25,13 +26,14 @@ Use when adding a new product or updating existing specs.
   "name": "Full Product Name",
   "family": "Alternator | Electric Motor | Power Press",
   "series": "e.g. UCW",
-  "technical_specifications": { "kW/kVA": "...", "Voltage": "...", "Frequency": "...", "RPM": "..." },
+  "technical_specifications": { "kW": "...", "kVA": "...", "Current": "...", "Voltage": "...", "Frequency": "...", "Speed": "...", "RPM": "...", "Efficiency": "...", "Weight": "..." },
   "image_path": "base44_product_image/filename.ext",
   "pdf_path": "raw_catalog/filename.pdf"
 }
 ```
 - Omit `pdf_path` only for Y/YR series
-- Use normalized technical keys: `kW/kVA`, `Voltage`, `Frequency`, `RPM`
+- Use normalized technical keys: `kW` and `kVA` separately (do not combine as `kW/kVA`), `Current`, `Voltage`, `Frequency`, `Speed`, `RPM`, `Efficiency`, `Weight`
+- For alternators, include every additional source stat as its own clear technical key instead of dropping it into notes or combining fields.
 - Never include `dimension_specifications` in the website data
 
 **Step 3 — Map assets**
@@ -53,7 +55,8 @@ Quality Gate Checklist:
 - [ ] No duplicate model values within the same series
 - [ ] All image_path values resolve to existing local files
 - [ ] All pdf_path values resolve to existing local files
-- [ ] Technical keys use normalized names (kW/kVA, Voltage, Frequency, RPM)
+- [ ] Technical keys use normalized names (kW, kVA, Current, Voltage, Frequency, Speed, RPM, Efficiency, Weight)
+- [ ] Alternator records include kW, kVA, Current, Voltage, Speed, Efficiency, Weight, and all other applicable source stats from the PDF
 - [ ] No dimension_specifications rendered on any page
 - [ ] No external GitHub raw or Supabase URLs in asset paths
 ```

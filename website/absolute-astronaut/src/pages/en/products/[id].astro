@@ -1,6 +1,8 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
-import { products, type Product, getSeriesSiblings, getChildModels, getVaryingSpecKeys } from "../../../data/products";
+import CatalogRatings from "../../../components/CatalogRatings.astro";
+import MotorModelTable from "../../../components/MotorModelTable.astro";
+import { products, type Product, getSeriesSiblings, getChildModels, getVaryingSpecKeys, getOrderedSpecEntries } from "../../../data/products";
 import { formatSpecValue } from "../../../utils/formatSpecValue";
 import { productMetaDescription, productJsonLd, breadcrumbJsonLd } from "../../../utils/seo";
 import { siteUrl } from "../../../utils/siteUrl";
@@ -20,9 +22,12 @@ if (!product) {
 }
 
 const isYYR = product.series === "Y/YR";
+const showMeccReferenceModels = product.id === "mecc_y2y23_parent";
+const catalogRatings = product.catalog_ratings;
 const seriesSiblings = getSeriesSiblings(product);
 const childModels = getChildModels(seriesSiblings);
-const varyingKeys = getVaryingSpecKeys(childModels);
+const specEntries = getOrderedSpecEntries(product);
+const varyingKeys = getVaryingSpecKeys(childModels, product);
 
 const site = Astro.site ?? new URL("https://www.indahmachine.com/");
 const productPath = `/en/products/${product.id}`;
@@ -128,7 +133,7 @@ const jsonLd = [
             Main technical specifications
           </h2>
           <dl class="grid gap-2.5 text-sm text-zinc-800">
-            {Object.entries(product.technical_specifications).map(([key, value]) => (
+            {specEntries.map(([key, value]) => (
               <div class="flex gap-3 border-b border-zinc-200/80 pb-2 last:border-0 last:pb-0">
                 <dt class="w-40 shrink-0 text-zinc-500">{key}</dt>
                 <dd class="flex-1 font-medium text-zinc-900">
@@ -175,6 +180,14 @@ const jsonLd = [
         </div>
 
       </div>
+
+      {catalogRatings && (
+        <CatalogRatings ratings={catalogRatings} heading="Catalog rating details" />
+      )}
+
+      {showMeccReferenceModels && (
+        <MotorModelTable lang="en" />
+      )}
 
       {childModels.length > 1 && varyingKeys.length > 0 && (
         <div class="space-y-3">

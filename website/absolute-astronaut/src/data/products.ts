@@ -8,6 +8,7 @@ export type Product = {
   model: string | null;
   description: string;
   technical_specifications: Record<string, unknown>;
+  catalog_ratings?: Record<string, unknown>;
   features: string[];
   applications: string[];
   image_path: string;
@@ -70,14 +71,51 @@ export function getChildModels(siblings: Product[]): Product[] {
   );
 }
 
+const alternatorSpecPriority = [
+  (key: string) => key.toLowerCase() === "kw",
+  (key: string) => key.toLowerCase() === "kva",
+  (key: string) => /\bcurrent\b/i.test(key),
+  (key: string) => /\bspeed\b/i.test(key) || /\brpm\b/i.test(key),
+  (key: string) => /\befficiency\b/i.test(key),
+  (key: string) => /\bweight\b/i.test(key),
+] as const;
+
+function getAlternatorSpecRank(key: string): number {
+  const rank = alternatorSpecPriority.findIndex((matches) => matches(key));
+  return rank === -1 ? alternatorSpecPriority.length : rank;
+}
+
+function isPrioritizedAlternatorSpec(key: string): boolean {
+  return getAlternatorSpecRank(key) < alternatorSpecPriority.length;
+}
+
+export function orderSpecKeys(product: Product, keys: string[]): string[] {
+  if (product.family !== "Alternator") return keys;
+
+  return [...keys].sort((a, b) => {
+    const rankDelta = getAlternatorSpecRank(a) - getAlternatorSpecRank(b);
+    if (rankDelta !== 0) return rankDelta;
+    return keys.indexOf(a) - keys.indexOf(b);
+  });
+}
+
+export function getOrderedSpecEntries(product: Product): [string, unknown][] {
+  const specs = product.technical_specifications;
+  return orderSpecKeys(product, Object.keys(specs)).map((key) => [key, specs[key]]);
+}
+
 /**
  * Spec keys that have at least two distinct values across the child models —
  * i.e. the columns worth showing in a comparison table.
  */
-export function getVaryingSpecKeys(children: Product[]): string[] {
+export function getVaryingSpecKeys(children: Product[], product?: Product): string[] {
   if (children.length < 2) return [];
   const allKeys = [...new Set(children.flatMap((c) => Object.keys(c.technical_specifications)))];
-  return allKeys.filter((key) => {
+  const varyingKeys = allKeys.filter((key) => {
+    if (product?.family === "Alternator" && isPrioritizedAlternatorSpec(key)) {
+      return children.some((c) => c.technical_specifications[key] !== undefined);
+    }
+
     const values = children
       .map((c) => c.technical_specifications[key])
       .filter((v) => v !== undefined && v !== null);
@@ -85,5 +123,6 @@ export function getVaryingSpecKeys(children: Product[]): string[] {
     const first = JSON.stringify(values[0]);
     return values.some((v) => JSON.stringify(v) !== first);
   });
+  return product ? orderSpecKeys(product, varyingKeys) : varyingKeys;
 }
 

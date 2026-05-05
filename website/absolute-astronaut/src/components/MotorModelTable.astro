@@ -1,0 +1,216 @@
+---
+import meccModels from "../../../../product_reference/electric_motors/mecc_y2_y23_child_models.json";
+import { formatSpecValue } from "../utils/formatSpecValue";
+
+type Lang = "en" | "id";
+
+type Props = {
+  lang: Lang;
+};
+
+const { lang } = Astro.props;
+
+const labels = {
+  en: {
+    eyebrow: "Model selector",
+    heading: "MECC Y2/Y23 motor models",
+    count: `${meccModels.length} models`,
+    search: "Search model or frame",
+    allPoles: "All poles",
+    allPower: "All kW",
+    model: "Model",
+    frame: "Frame",
+    poles: "Poles",
+    power: "kW",
+    rpm50: "RPM 50Hz",
+    rpm60: "RPM 60Hz",
+    voltage: "Voltage",
+    mounting: "Mounting",
+    noResults: "No matching models",
+  },
+  id: {
+    eyebrow: "Pilihan model",
+    heading: "Model motor MECC Y2/Y23",
+    count: `${meccModels.length} model`,
+    search: "Cari model atau frame",
+    allPoles: "Semua pole",
+    allPower: "Semua kW",
+    model: "Model",
+    frame: "Frame",
+    poles: "Pole",
+    power: "kW",
+    rpm50: "RPM 50Hz",
+    rpm60: "RPM 60Hz",
+    voltage: "Voltage",
+    mounting: "Mounting",
+    noResults: "Tidak ada model yang cocok",
+  },
+} satisfies Record<Lang, Record<string, string>>;
+
+const t = labels[lang];
+
+function specsOf(model: (typeof meccModels)[number]) {
+  return model.technical_specifications;
+}
+
+const poleOptions = [
+  ...new Set(meccModels.map((model) => String(specsOf(model).Poles))),
+].sort((a, b) => Number(a) - Number(b));
+
+const powerBands = [
+  { value: "0-1", label: "0-1 kW", min: 0, max: 1 },
+  { value: "1-10", label: "1-10 kW", min: 1, max: 10 },
+  { value: "10-50", label: "10-50 kW", min: 10, max: 50 },
+  { value: "50-150", label: "50-150 kW", min: 50, max: 150 },
+  { value: "150+", label: "150+ kW", min: 150, max: Infinity },
+];
+---
+
+<section
+  class="space-y-4"
+  data-motor-model-table
+>
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div class="space-y-1">
+      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-red-500">
+        {t.eyebrow}
+      </p>
+      <h2 class="text-2xl font-semibold tracking-tight text-zinc-900">
+        {t.heading}
+      </h2>
+      <p class="text-sm text-zinc-500">{t.count}</p>
+    </div>
+
+    <div class="grid gap-2 sm:grid-cols-[minmax(12rem,1fr)_9rem_9rem]">
+      <input
+        type="search"
+        data-model-search
+        placeholder={t.search}
+        aria-label={t.search}
+        class="h-10 rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-red-400 focus:ring-2 focus:ring-red-100"
+      />
+      <select
+        data-pole-filter
+        aria-label={t.poles}
+        class="h-10 rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-red-400 focus:ring-2 focus:ring-red-100"
+      >
+        <option value="">{t.allPoles}</option>
+        {poleOptions.map((pole) => (
+          <option value={pole}>{pole}P</option>
+        ))}
+      </select>
+      <select
+        data-power-filter
+        aria-label={t.power}
+        class="h-10 rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-900 outline-none transition focus:border-red-400 focus:ring-2 focus:ring-red-100"
+      >
+        <option value="">{t.allPower}</option>
+        {powerBands.map((band) => (
+          <option value={band.value}>{band.label}</option>
+        ))}
+      </select>
+    </div>
+  </div>
+
+  <div class="overflow-x-auto rounded-lg border border-zinc-200 bg-white shadow-sm">
+    <table class="w-full min-w-[58rem] border-collapse text-left text-sm">
+      <thead>
+        <tr class="border-b border-zinc-200 bg-zinc-50">
+          <th class="sticky left-0 z-10 whitespace-nowrap bg-zinc-50 px-4 py-3 font-semibold text-zinc-900">
+            {t.model}
+          </th>
+          <th class="whitespace-nowrap px-4 py-3 font-semibold text-zinc-900">{t.frame}</th>
+          <th class="whitespace-nowrap px-4 py-3 font-semibold text-zinc-900">{t.poles}</th>
+          <th class="whitespace-nowrap px-4 py-3 font-semibold text-zinc-900">{t.power}</th>
+          <th class="whitespace-nowrap px-4 py-3 font-semibold text-zinc-900">{t.rpm50}</th>
+          <th class="whitespace-nowrap px-4 py-3 font-semibold text-zinc-900">{t.rpm60}</th>
+          <th class="whitespace-nowrap px-4 py-3 font-semibold text-zinc-900">{t.voltage}</th>
+          <th class="whitespace-nowrap px-4 py-3 font-semibold text-zinc-900">{t.mounting}</th>
+        </tr>
+      </thead>
+      <tbody data-model-rows>
+        {meccModels.map((model) => {
+          const specs = specsOf(model);
+          const frame = String(specs["Frame No"]);
+          const poles = String(specs.Poles);
+          const kw = Number(specs.kW);
+          const searchText = `${model.model} ${frame} ${poles}P ${kw}kW`.toLowerCase();
+
+          return (
+            <tr
+              data-model-row
+              data-search={searchText}
+              data-poles={poles}
+              data-kw={kw}
+              class="border-b border-zinc-100 last:border-0 hover:bg-red-50/60"
+            >
+              <td class="sticky left-0 z-10 whitespace-nowrap bg-white px-4 py-2.5 font-semibold text-zinc-900">
+                {model.model}
+              </td>
+              <td class="whitespace-nowrap px-4 py-2.5 text-zinc-700">{frame}</td>
+              <td class="whitespace-nowrap px-4 py-2.5 text-zinc-700">{poles}P</td>
+              <td class="whitespace-nowrap px-4 py-2.5 font-semibold text-zinc-900">{kw}</td>
+              <td class="whitespace-nowrap px-4 py-2.5 text-zinc-700">{specs["Rated RPM (50Hz)"]}</td>
+              <td class="whitespace-nowrap px-4 py-2.5 text-zinc-700">{specs["Rated RPM (60Hz)"]}</td>
+              <td class="whitespace-nowrap px-4 py-2.5 text-zinc-700">
+                {formatSpecValue(specs["Voltage Options"])}
+              </td>
+              <td class="whitespace-nowrap px-4 py-2.5 text-zinc-700">
+                {formatSpecValue(specs.Mounting)}
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+    <p data-no-results class="hidden px-4 py-6 text-sm text-zinc-500">{t.noResults}</p>
+  </div>
+</section>
+
+<script>
+  const powerBands = [
+    { value: "0-1", min: 0, max: 1 },
+    { value: "1-10", min: 1, max: 10 },
+    { value: "10-50", min: 10, max: 50 },
+    { value: "50-150", min: 50, max: 150 },
+    { value: "150+", min: 150, max: Infinity },
+  ];
+
+  document.querySelectorAll("[data-motor-model-table]").forEach((table) => {
+    const search = table.querySelector("[data-model-search]");
+    const poleFilter = table.querySelector("[data-pole-filter]");
+    const powerFilter = table.querySelector("[data-power-filter]");
+    const rows = Array.from(table.querySelectorAll("[data-model-row]"));
+    const noResults = table.querySelector("[data-no-results]");
+
+    function applyFilters() {
+      const query = search instanceof HTMLInputElement ? search.value.trim().toLowerCase() : "";
+      const pole = poleFilter instanceof HTMLSelectElement ? poleFilter.value : "";
+      const power = powerFilter instanceof HTMLSelectElement ? powerFilter.value : "";
+      const band = powerBands.find((item) => item.value === power);
+      let visibleCount = 0;
+
+      rows.forEach((row) => {
+        const element = row instanceof HTMLElement ? row : null;
+        if (!element) return;
+
+        const kw = Number(element.dataset.kw || "0");
+        const matchesQuery = !query || (element.dataset.search || "").includes(query);
+        const matchesPole = !pole || element.dataset.poles === pole;
+        const matchesPower = !band || (kw >= band.min && kw < band.max);
+        const isVisible = matchesQuery && matchesPole && matchesPower;
+
+        element.classList.toggle("hidden", !isVisible);
+        if (isVisible) visibleCount += 1;
+      });
+
+      if (noResults instanceof HTMLElement) {
+        noResults.classList.toggle("hidden", visibleCount > 0);
+      }
+    }
+
+    search?.addEventListener("input", applyFilters);
+    poleFilter?.addEventListener("change", applyFilters);
+    powerFilter?.addEventListener("change", applyFilters);
+  });
+</script>
