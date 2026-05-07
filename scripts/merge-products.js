@@ -39,12 +39,12 @@ const ASSET_MAP = {
   "T2W3-N": {
     family: "Alternator",
     image: "t2w3n_alternator.png",
-    pdf: "t2w3_alternator.pdf",
+    pdf: "t2w3-n_alternator_v2.pdf",
   },
   "T2W3-N-ALT": {
     family: "Alternator",
     image: "t2w3n_alternator.png",
-    pdf: "t2w3n_alternator.pdf",
+    pdf: "t2w3-n_alternator_v2.pdf",
   },
   "Mecc Alte": {
     family: "Alternator",
