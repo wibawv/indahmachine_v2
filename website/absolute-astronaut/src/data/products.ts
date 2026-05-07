@@ -38,11 +38,21 @@ export const seriesListingProducts: Product[] = (() => {
     byKey.get(key)!.push(p);
   }
   const familyOrder = new Map(families.map((f, i) => [f, i] as const));
+  const alternatorSeriesListingPriority = ["UCW", "TZH", "T2W3-N"] as const;
+  function getAlternatorListingRank(series: string): number {
+    const idx = alternatorSeriesListingPriority.indexOf(series as typeof alternatorSeriesListingPriority[number]);
+    return idx === -1 ? alternatorSeriesListingPriority.length : idx;
+  }
   const rows = [...byKey.values()].map(pickSeriesListingProduct);
   rows.sort((a, b) => {
     const oa = familyOrder.get(a.family) ?? 999;
     const ob = familyOrder.get(b.family) ?? 999;
     if (oa !== ob) return oa - ob;
+    if (a.family === "Alternator" && b.family === "Alternator") {
+      const ra = getAlternatorListingRank(a.series);
+      const rb = getAlternatorListingRank(b.series);
+      if (ra !== rb) return ra - rb;
+    }
     return a.series.localeCompare(b.series);
   });
   return rows;
