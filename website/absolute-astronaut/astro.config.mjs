@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 // GitHub Actions sets ASTRO_SITE / ASTRO_BASE for Pages (user site vs project site).
-const site = process.env.ASTRO_SITE || 'https://www.indahmachine.com';
+const site = process.env.ASTRO_SITE || 'https://indahmachine.com';
 const base = process.env.ASTRO_BASE || '/';
 
 export default defineConfig({

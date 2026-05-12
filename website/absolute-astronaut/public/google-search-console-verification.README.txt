@@ -1,0 +1,23 @@
+Google Search Console verification — drop your HTML token file in this folder.
+
+Steps:
+1. Go to https://search.google.com/search-console and use the existing domain property:
+   indahmachine.com
+2. Choose verification method: HTML file.
+3. Google gives you a file named like:  google<hex-token>.html
+4. Save that exact file in this folder:
+   website/absolute-astronaut/public/google<hex-token>.html
+5. Commit and push. Wait for the GitHub Pages workflow to deploy.
+6. Visit https://indahmachine.com/google<hex-token>.html in your browser
+   to confirm it serves correctly (should show one line of text from Google).
+7. Click "Verify" in Search Console.
+
+After verification, submit the sitemap:
+   https://indahmachine.com/sitemap-index.xml
+
+Canonical domain:
+   The site uses https://indahmachine.com as the canonical host. Keep
+   website/absolute-astronaut/public/CNAME set to indahmachine.com and keep
+   the GitHub Pages custom domain set to indahmachine.com.
+
+You can delete this README.txt once verified, or keep it as documentation.

@@ -58,7 +58,7 @@ const description = trimMetaDescription(
               <div class="flex aspect-[4/3] w-full items-center justify-center p-2 sm:p-2.5">
                 <img
                   src={siteUrl(p.image_path.replace(/^\/+/, ""))}
-                  alt={p.name}
+                  alt={`${p.name} | ${p.family === "Alternator" ? "alternator genset Indonesia" : p.family === "Electric Motor" ? "motor listrik Indonesia" : "power press Indonesia"} — Indah Machine`}
                   class="max-h-full max-w-full object-contain object-center transition duration-300 group-hover:scale-[1.02]"
                   loading="lazy"
                 />

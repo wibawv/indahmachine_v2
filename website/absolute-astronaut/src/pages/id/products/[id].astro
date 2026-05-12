@@ -29,7 +29,7 @@ const childModels = getChildModels(seriesSiblings);
 const specEntries = getOrderedSpecEntries(product);
 const varyingKeys = getVaryingSpecKeys(childModels, product);
 
-const site = Astro.site ?? new URL("https://www.indahmachine.com/");
+const site = Astro.site ?? new URL("https://indahmachine.com/");
 const productPath = `/id/products/${product.id}`;
 const jsonLd = [
   JSON.stringify(productJsonLd(product, site)),
@@ -121,7 +121,7 @@ const jsonLd = [
         <div class="flex min-h-[18rem] items-center justify-center overflow-hidden rounded-2xl border border-zinc-200 bg-white p-3 sm:min-h-[20rem] sm:p-4">
           <img
             src={siteUrl(product.image_path.replace(/^\/+/, ""))}
-            alt={product.name}
+            alt={`${product.name} | ${product.family === "Alternator" ? "alternator genset Indonesia" : product.family === "Electric Motor" ? "motor listrik Indonesia" : "power press Indonesia"} — Indah Machine, Medan`}
             class="max-h-80 w-full object-contain object-center sm:max-h-96"
             loading="lazy"
           />

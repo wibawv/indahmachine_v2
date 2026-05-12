@@ -1,7 +1,7 @@
 # Deploy static site to GitHub Pages.
 #
 # One-time repo setup: Settings → Pages → Build and deployment → Source: GitHub Actions.
-# Optional later: custom domain (e.g. www.indahmachine.com) in Pages settings + DNS CNAME.
+# Custom domain uses the apex canonical host: indahmachine.com.
 
 name: Deploy to GitHub Pages
 

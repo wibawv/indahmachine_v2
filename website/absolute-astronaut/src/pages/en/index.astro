@@ -1,8 +1,13 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { products, families } from "../../data/products";
-import { trimMetaDescription } from "../../utils/seo";
+import { trimMetaDescription, localBusinessJsonLdMulti } from "../../utils/seo";
 import { siteUrl } from "../../utils/siteUrl";
+
+const site = Astro.site ?? new URL("https://indahmachine.com/");
+const jsonLd = localBusinessJsonLdMulti(["medan", "jakarta", "surabaya"], site).map((s) =>
+  JSON.stringify(s)
+);
 
 const description = trimMetaDescription(
   "Industrial machinery distributor Medan, Indonesia: alternators for generators and genset, electric motors, power presses. Serving Jakarta, Surabaya, and Indonesia. Contact for quote."
@@ -34,10 +39,11 @@ const familyMeta: Record<string, { image: string; alt: string; description: stri
 
 <Layout
   lang="en"
-  title="Indah Machine – Industrial Machinery Distributor"
+  title="Generator Indonesia & Genset Supplier | Indah Machine Medan"
   description={description}
   canonicalPath="/en/"
   localizedPaths={{ en: "/en/", id: "/id/" }}
+  jsonLd={jsonLd}
 >
   <main class="text-zinc-900">
 
@@ -126,6 +132,72 @@ const familyMeta: Record<string, { image: string; alt: string; description: stri
               </a>
             );
           })}
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2b: Solutions (SEO landing hubs) -->
+    <section class="bg-zinc-50 py-20">
+      <div class="mx-auto max-w-6xl px-4">
+        <div class="mb-10 space-y-2">
+          <p class="text-xs font-semibold uppercase tracking-[0.3em] text-red-600">Solutions</p>
+          <h2 class="text-3xl font-semibold tracking-tight text-zinc-900">
+            Browse by need.
+          </h2>
+          <p class="max-w-2xl text-base text-zinc-600">
+            Pages tailored to common buyer searches — by product category and by city. Each links into the relevant catalog and contact path.
+          </p>
+        </div>
+
+        <div class="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+          <a href={siteUrl("en/alternator-indonesia/")} class="group rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:border-red-300 hover:shadow-md">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-red-500">By Category</p>
+            <h3 class="mt-1 text-base font-semibold text-zinc-900">Alternator Indonesia</h3>
+            <p class="mt-2 text-sm text-zinc-500">Brushless synchronous alternators — UCW, TZH, T2W3, Mecc Alte.</p>
+            <p class="mt-3 text-xs font-semibold text-red-600 group-hover:text-red-500">Learn more →</p>
+          </a>
+          <a href={siteUrl("en/motor-listrik-indonesia/")} class="group rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:border-red-300 hover:shadow-md">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-red-500">By Category</p>
+            <h3 class="mt-1 text-base font-semibold text-zinc-900">Electric Motor Distributor</h3>
+            <p class="mt-2 text-sm text-zinc-500">Three-phase motors for pumps, fans, compressors, and production lines.</p>
+            <p class="mt-3 text-xs font-semibold text-red-600 group-hover:text-red-500">Learn more →</p>
+          </a>
+          <a href={siteUrl("en/generator-indonesia/")} class="group rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:border-red-300 hover:shadow-md">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-red-500">By Category</p>
+            <h3 class="mt-1 text-base font-semibold text-zinc-900">Generator Indonesia</h3>
+            <p class="mt-2 text-sm text-zinc-500">Components for genset builders — alternator heads and electrical parts.</p>
+            <p class="mt-3 text-xs font-semibold text-red-600 group-hover:text-red-500">Learn more →</p>
+          </a>
+          <a href={siteUrl("en/genset-indonesia/")} class="group rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:border-red-300 hover:shadow-md">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-red-500">By Category</p>
+            <h3 class="mt-1 text-base font-semibold text-zinc-900">Genset Indonesia</h3>
+            <p class="mt-2 text-sm text-zinc-500">Alternator heads for diesel genset builds — palm oil, marine, telecom.</p>
+            <p class="mt-3 text-xs font-semibold text-red-600 group-hover:text-red-500">Learn more →</p>
+          </a>
+          <a href={siteUrl("en/genset-medan/")} class="group rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:border-red-300 hover:shadow-md">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-red-500">By City</p>
+            <h3 class="mt-1 text-base font-semibold text-zinc-900">Genset, Generator & Alternator Medan</h3>
+            <p class="mt-2 text-sm text-zinc-500">HQ at Jln. Mangkubumi No. 12. Serving Sumatra and beyond.</p>
+            <p class="mt-3 text-xs font-semibold text-red-600 group-hover:text-red-500">Learn more →</p>
+          </a>
+          <a href={siteUrl("en/genset-jakarta/")} class="group rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:border-red-300 hover:shadow-md">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-red-500">By City</p>
+            <h3 class="mt-1 text-base font-semibold text-zinc-900">Genset, Generator & Alternator Jakarta</h3>
+            <p class="mt-2 text-sm text-zinc-500">Jakarta warehouse coverage for Greater Jakarta and West Java.</p>
+            <p class="mt-3 text-xs font-semibold text-red-600 group-hover:text-red-500">Learn more →</p>
+          </a>
+          <a href={siteUrl("en/genset-surabaya/")} class="group rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:border-red-300 hover:shadow-md">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-red-500">By City</p>
+            <h3 class="mt-1 text-base font-semibold text-zinc-900">Genset, Generator & Alternator Surabaya</h3>
+            <p class="mt-2 text-sm text-zinc-500">Surabaya warehouse for East Java and Eastern Indonesia.</p>
+            <p class="mt-3 text-xs font-semibold text-red-600 group-hover:text-red-500">Learn more →</p>
+          </a>
+          <a href={siteUrl("en/products")} class="group rounded-2xl border border-zinc-200 bg-zinc-100 p-5 shadow-sm transition hover:border-red-300 hover:shadow-md">
+            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Catalog</p>
+            <h3 class="mt-1 text-base font-semibold text-zinc-900">Full Product Catalog</h3>
+            <p class="mt-2 text-sm text-zinc-500">All alternator, motor, and power press models. Filter by family.</p>
+            <p class="mt-3 text-xs font-semibold text-red-600 group-hover:text-red-500">Browse →</p>
+          </a>
         </div>
       </div>
     </section>

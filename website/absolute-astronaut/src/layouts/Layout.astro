@@ -36,7 +36,7 @@ const {
   jsonLd: jsonLdRaw = [],
 } = Astro.props as Props;
 
-const site = Astro.site ?? new URL("https://www.indahmachine.com/");
+const site = Astro.site ?? new URL("https://indahmachine.com/");
 const canonicalURL = canonicalPath
   ? new URL(siteUrl(canonicalPath.replace(/^\/+/, "")), site).href
   : new URL(Astro.url.pathname, site).href;

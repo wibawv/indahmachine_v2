@@ -1,0 +1,91 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import KeywordLanding from "../../components/KeywordLanding.astro";
+import { siteUrl } from "../../utils/siteUrl";
+import {
+  faqJsonLd,
+  localBusinessJsonLdMulti,
+  breadcrumbJsonLd,
+  type CityId,
+} from "../../utils/seo";
+import {
+  allLandingSlugs,
+  cityForSlug,
+  landingContent,
+  slugLabels,
+  type LandingSlug,
+} from "../../data/landingContent";
+
+export function getStaticPaths() {
+  return allLandingSlugs.map((slug) => ({
+    params: { slug },
+    props: { slug },
+  }));
+}
+
+const { slug } = Astro.props as { slug: LandingSlug };
+const content = landingContent[slug].id;
+const city = cityForSlug[slug];
+
+const enPath = `/en/${slug}/`;
+const idPath = `/id/${slug}/`;
+
+const site = Astro.site ?? new URL("https://indahmachine.com/");
+
+const cityIds: CityId[] = city ? [city] : ["medan", "jakarta", "surabaya"];
+const localBusinessSchemas = localBusinessJsonLdMulti(cityIds, site);
+
+const jsonLd: string[] = [
+  ...localBusinessSchemas.map((s) => JSON.stringify(s)),
+  JSON.stringify(faqJsonLd(content.faqs)),
+  JSON.stringify(
+    breadcrumbJsonLd(
+      [
+        { name: "Beranda", path: "/id/" },
+        { name: slugLabels[slug].id, path: idPath },
+      ],
+      site
+    )
+  ),
+];
+
+const crossLinks = (content.crossLinkSlugs ?? [])
+  .filter((s): s is LandingSlug => allLandingSlugs.includes(s as LandingSlug))
+  .map((s) => ({
+    label: slugLabels[s as LandingSlug].id,
+    href: siteUrl(`id/${s}/`.replace(/^\//, "")),
+  }));
+---
+
+<Layout
+  lang="id"
+  title={content.title}
+  description={content.description}
+  canonicalPath={idPath}
+  localizedPaths={{ en: enPath, id: idPath }}
+  jsonLd={jsonLd}
+>
+  <KeywordLanding
+    lang="id"
+    eyebrow={content.eyebrow}
+    h1={content.h1}
+    intro={content.intro}
+    productIds={content.productIds}
+    productFamilies={content.productFamilies}
+    productsHeading={content.productsHeading}
+    industriesHeading={content.industriesHeading}
+    industries={content.industries}
+    trustHeading={content.trustHeading}
+    trustBody={content.trustBody}
+    coverageHeading={content.coverageHeading ?? null}
+    coverageBody={content.coverageBody ?? null}
+    faqHeading={content.faqHeading}
+    faqs={content.faqs}
+    crossLinksHeading={content.crossLinksHeading ?? null}
+    crossLinks={crossLinks}
+    ctaHeading={content.ctaHeading}
+    ctaBody={content.ctaBody}
+    ctaButtonLabel={content.ctaButtonLabel}
+    ctaHref={siteUrl("id/contact")}
+  />
+</Layout>

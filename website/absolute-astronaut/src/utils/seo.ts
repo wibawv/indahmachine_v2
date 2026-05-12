@@ -41,23 +41,88 @@ export function productJsonLd(product: Product, site: URL): object {
   };
 }
 
-export function localBusinessJsonLd(site: URL): object {
+export type CityId = "medan" | "jakarta" | "surabaya";
+
+export const businessLocations: Record<
+  CityId,
+  {
+    id: CityId;
+    cityLabel: string;
+    addressLocality: string;
+    addressRegion: string;
+    streetAddress?: string;
+    postalCode?: string;
+    role: "HQ" | "Warehouse";
+  }
+> = {
+  medan: {
+    id: "medan",
+    cityLabel: "Medan",
+    addressLocality: "Medan",
+    addressRegion: "North Sumatra",
+    streetAddress: "Jln. Mangkubumi No. 12",
+    postalCode: "20151",
+    role: "HQ",
+  },
+  jakarta: {
+    id: "jakarta",
+    cityLabel: "Jakarta",
+    addressLocality: "Jakarta",
+    addressRegion: "DKI Jakarta",
+    role: "Warehouse",
+  },
+  surabaya: {
+    id: "surabaya",
+    cityLabel: "Surabaya",
+    addressLocality: "Surabaya",
+    addressRegion: "East Java",
+    role: "Warehouse",
+  },
+};
+
+function locationJsonLd(cityId: CityId, site: URL): object {
+  const loc = businessLocations[cityId];
   const url = new URL(import.meta.env.BASE_URL, site).href;
+  const address: Record<string, string> = {
+    "@type": "PostalAddress",
+    addressLocality: loc.addressLocality,
+    addressRegion: loc.addressRegion,
+    addressCountry: "ID",
+  };
+  if (loc.streetAddress) address.streetAddress = loc.streetAddress;
+  if (loc.postalCode) address.postalCode = loc.postalCode;
   return {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    name: "Indah Machine",
+    "@id": `${url}#${loc.id}`,
+    name: loc.role === "HQ" ? "Indah Machine" : `Indah Machine — ${loc.cityLabel}`,
     url,
     email: "indahmachine@gmail.com",
     telephone: ["+6285348674326", "+62816306825"],
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: "Jln. Mangkubumi No. 12",
-      addressLocality: "Medan",
-      postalCode: "20151",
-      addressRegion: "North Sumatra",
-      addressCountry: "ID",
-    },
+    address,
+    areaServed: { "@type": "City", name: loc.cityLabel },
+  };
+}
+
+/** Backwards-compatible: emits the Medan HQ LocalBusiness only. */
+export function localBusinessJsonLd(site: URL): object {
+  return locationJsonLd("medan", site);
+}
+
+/** Emit one or more LocalBusiness entries; pass ["medan","jakarta","surabaya"] on the homepage. */
+export function localBusinessJsonLdMulti(cityIds: CityId[], site: URL): object[] {
+  return cityIds.map((id) => locationJsonLd(id, site));
+}
+
+export function faqJsonLd(items: { q: string; a: string }[]): object {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map(({ q, a }) => ({
+      "@type": "Question",
+      name: q,
+      acceptedAnswer: { "@type": "Answer", text: a },
+    })),
   };
 }
 
