@@ -2,7 +2,7 @@
 import Layout from "../../../layouts/Layout.astro";
 import CatalogRatings from "../../../components/CatalogRatings.astro";
 import MotorModelTable from "../../../components/MotorModelTable.astro";
-import { products, type Product, getSeriesSiblings, getChildModels, getVaryingSpecKeys, getOrderedSpecEntries } from "../../../data/products";
+import { products, type Product, getSeriesSiblings, getChildModels, getVaryingSpecKeys, getOrderedSpecEntries, isSeriesListingProduct } from "../../../data/products";
 import { formatSpecValue } from "../../../utils/formatSpecValue";
 import { productMetaDescription, productJsonLd, breadcrumbJsonLd } from "../../../utils/seo";
 import { siteUrl } from "../../../utils/siteUrl";
@@ -31,6 +31,7 @@ const varyingKeys = getVaryingSpecKeys(childModels, product);
 
 const site = Astro.site ?? new URL("https://indahmachine.com/");
 const productPath = `/id/products/${product.id}`;
+const isCanonicalSeriesProduct = isSeriesListingProduct(product.id);
 const jsonLd = [
   JSON.stringify(productJsonLd(product, site)),
   JSON.stringify(
@@ -57,6 +58,7 @@ const jsonLd = [
   canonicalPath={productPath}
   localizedPaths={{ en: `/en/products/${product.id}`, id: productPath }}
   ogImagePath={`/${product.image_path}`}
+  noindex={!isCanonicalSeriesProduct}
   jsonLd={jsonLd}
 >
   <main class="bg-zinc-100 text-zinc-900">

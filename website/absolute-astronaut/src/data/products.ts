@@ -30,6 +30,12 @@ function pickSeriesListingProduct(group: Product[]): Product {
   return seriesNamed ?? group[0]!;
 }
 
+export const seriesListingProductIds: Set<string> = new Set();
+
+export function isSeriesListingProduct(productId: string): boolean {
+  return seriesListingProductIds.has(productId);
+}
+
 export const seriesListingProducts: Product[] = (() => {
   const byKey = new Map<string, Product[]>();
   for (const p of products) {
@@ -55,6 +61,7 @@ export const seriesListingProducts: Product[] = (() => {
     }
     return a.series.localeCompare(b.series);
   });
+  for (const r of rows) seriesListingProductIds.add(r.id);
   return rows;
 })();
 

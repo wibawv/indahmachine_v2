@@ -4,6 +4,10 @@ dist/
 # generated types
 .astro/
 
+# Legacy /Doc/*.pdf aliases are regenerated from raw_catalog/ by
+# scripts/sync-public-assets.js on predev / prebuild — do not track.
+public/Doc/
+
 # dependencies
 node_modules/
 

@@ -1,0 +1,57 @@
+---
+const site = Astro.site ?? new URL("https://indahmachine.com/");
+const fallbackPath = "/en/products/";
+const canonicalHref = new URL(fallbackPath.replace(/^\/+/, ""), site).href;
+
+const legacySeriesAliases: Record<string, string> = {
+  "T2W3": "t2w3_20250808041640",
+  "T2W3-N": "t2w3n_parent",
+  "T2W3N": "t2w3n_parent",
+  "TZH": "tzh_parent_autofill",
+  "TZH-N": "tzh_n_184_parent",
+  "TZHN": "tzh_n_184_parent",
+  "UCW": "ucw_parent",
+  "YJS": "yjs_parent",
+  "ECO/ECP": "mecc_eco_ecp_parent",
+  "ECP/ECO": "mecc_eco_ecp_parent",
+  "ECO": "mecc_eco_ecp_parent",
+  "ECP": "mecc_eco_ecp_parent",
+  "MECC": "mecc_y2y23_parent",
+  "MECC ALTE": "mecc_eco_ecp_parent",
+  "Y2/Y23": "mecc_y2y23_parent",
+  "YPTZ/YPTQ": "",
+  "Y/YR": "",
+};
+const aliasJson = JSON.stringify(legacySeriesAliases);
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Indah Machine — Products</title>
+    <link rel="canonical" href={canonicalHref} />
+    <meta name="robots" content="noindex, follow" />
+    <meta http-equiv="refresh" content={`0; url=${fallbackPath}`} />
+    <script is:inline define:vars={{ aliasJson, fallbackPath }}>
+      (function () {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const rawSeries = (params.get("series") || "").trim();
+          const aliases = JSON.parse(aliasJson);
+          const key = rawSeries.toUpperCase();
+          const id = aliases[key] ?? aliases[rawSeries] ?? "";
+          const target = id ? "/en/products/" + id + "/" : fallbackPath;
+          window.location.replace(target);
+        } catch (_err) {
+          window.location.replace(fallbackPath);
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <p>
+      Redirecting to <a href={fallbackPath}>indahmachine.com/en/products/</a>.
+    </p>
+  </body>
+</html>
